@@ -1,6 +1,10 @@
 package view;
 
+import java.io.IOException;
+
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
@@ -27,15 +31,17 @@ public class GameView {
      * GameView object for setting up the GUI
      *
      * @param stage the primary stage
+     * @throws IOException 
      */
-    public GameView(Stage stage) {
+    public GameView(Stage stage) throws IOException {
 
+    	final FXMLLoader loader = new FXMLLoader(getClass().getResource("MainMenu.fxml"));
         stage.setTitle("Rennspiel");
         stage.setResizable(false);
         stage.sizeToScene();
-
+        AnchorPane a = loader.load();
         rootPane = new StackPane();
-        scene = new Scene(rootPane, 1300, 800);
+        scene = new Scene(a, 1300, 800);
 
         setUpGameWindow();
 
