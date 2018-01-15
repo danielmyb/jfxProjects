@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.shape.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="apGP" prefHeight="800.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GameController">
+   <children>
+      <Ellipse fill="DODGERBLUE" layoutX="662.0" layoutY="383.0" radiusX="600.0" radiusY="239.0" stroke="BLACK" strokeType="INSIDE" />
+      <Button fx:id="mButton" layoutX="14.0" layoutY="761.0" mnemonicParsing="false" text="Menu" />
+   </children>
+</AnchorPane>
