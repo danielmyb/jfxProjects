@@ -1,6 +1,7 @@
 package application;
 
 import controller.GameController;
+import controller.GamePaneController;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -18,7 +19,7 @@ public class Main extends Application {
         GameView gameView = new GameView(stage);
         GameModel gameModel = new GameModel();
         GameController gameController = new GameController(gameModel, gameView);
-
+        GamePaneController gpc = new GamePaneController();
         /*
          * Start the gameloop.
          * It is executed every frame, the long now is the current timestamp
@@ -43,7 +44,6 @@ public class Main extends Application {
                   Use the controller to update all dependencies
                  */
                 gameController.updateContinuously(timeDifferenceInSeconds);
-
             }
         }.start();
 

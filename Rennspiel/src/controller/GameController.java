@@ -46,7 +46,7 @@ public class GameController {
      * @param timeDifferenceInSeconds the time passed since last frame
      */
     public void updateContinuously(double timeDifferenceInSeconds) {
-
+    	
     }
 
     private void setUpInputHandler() {

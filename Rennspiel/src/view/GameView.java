@@ -73,4 +73,14 @@ public class GameView {
 
         stage.setScene(scene);
     }
+    
+    public void setUpMenu() throws IOException {
+    	loader = new FXMLLoader(getClass().getResource("MainMenu.fxml"));
+    	rootPane = loader.load();
+    	scene = new Scene(rootPane, 1300, 800);
+    	GameController gc = loader.getController();
+    	gc.setStage(stage);
+    	
+    	stage.setScene(scene);
+    }
 }

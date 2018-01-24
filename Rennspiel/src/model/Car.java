@@ -17,9 +17,19 @@ public class Car {
 	private boolean totalschaden;
 	private double luftwiderstandbeiwert;
 	private double geschwindigkeit;
+	private double beschleunigung;
 
 	public Car() {
-
+		this.laenge = 4.255;
+		this.breite = 2.027;
+		this.gewicht = 1500;
+		this.rotation = 90.0;
+		this.stirnflaeche = 2.19;
+		this.rotationsradius = 0.0;
+		this.totalschaden = false;
+		this.luftwiderstandbeiwert = 0.28;
+		this.geschwindigkeit = 0.0;
+		this.beschleunigung = 0.0;
 	}
 
 	public Car(double l, double b, double g, Vec2d p, double r, double s, double rr, boolean t, double lwb, double ge) {
@@ -115,4 +125,11 @@ public class Car {
 		this.geschwindigkeit = geschwindigkeit;
 	}
 
+	public double getBeschleunigung() {
+		return beschleunigung;
+	}
+
+	public void setBeschleunigung(double b) {
+		this.beschleunigung = b;
+	}
 }
