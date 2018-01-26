@@ -13,6 +13,7 @@
       <Ellipse fill="#1fff2d" layoutX="662.0" layoutY="383.0" radiusX="498.0" radiusY="127.0" stroke="BLACK" strokeType="INSIDE" />
       <Line fx:id="leftLine" endX="103.0" layoutX="62.0" layoutY="383.0" />
       <Line fx:id="rightLine" endX="100.0" layoutX="1160.0" layoutY="384.0" startX="-1.0" />
-      <Circle fx:id="carbox" fill="DODGERBLUE" layoutX="124.0" layoutY="383.0" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
+      <TextField fx:id="timerField" alignment="CENTER" disable="true" layoutX="1099.0" layoutY="14.0" promptText="00:00:00" />
+      <Rectangle fx:id="carbox" arcHeight="5.0" arcWidth="5.0" fill="#12589a" height="20.0" layoutX="100.0" layoutY="390.0" stroke="BLACK" strokeType="INSIDE" width="30.0" />
    </children>
 </AnchorPane>
