@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
 import com.sun.javafx.geom.Vec2d;
 
@@ -21,6 +22,7 @@ import javafx.stage.Stage;
 import model.Car;
 import model.Checkpointlinie;
 import model.GameModel;
+import model.Hindernis;
 import model.Kraefte;
 import model.StartZiellinie;
 import view.GameView;
@@ -57,6 +59,10 @@ public class GamePaneController {
 	private double rangeX = 0.0;
 	private double rangeY = 0.0;
 
+	private LinkedList<Circle> obstacles = new LinkedList<Circle>();
+
+	private long raceTime;
+
 	public GamePaneController() {
 
 	}
@@ -75,6 +81,7 @@ public class GamePaneController {
 		cl.setEnde(new Vec2d(rightLine.getEndX(), rightLine.getEndY()));
 		Paint paint = Color.color(Math.random(), Math.random(), Math.random());
 		carbox.setFill(paint);
+		insertObstacles();
 		mButton.setOnAction((event) -> {
 			try {
 				gameView = new GameView((Stage) apGP.getScene().getWindow());
@@ -150,17 +157,40 @@ public class GamePaneController {
 			public void handle(long now) {
 				double timeDifferenceInSeconds = (now - oldTime) / 1000000000.0;
 				oldTime = now;
-				checkStart();
+
 				if (raceStarted) {
-					timerField.setText(Long.toString(now));
+					calcTimer(now);
+				} else {
+					checkStart();
+					raceTime = now;
 				}
 				updateContinously(timeDifferenceInSeconds);
 			}
 		}.start();
 	}
 
+	private void insertObstacles() {
+		for (int i = 0; i < 10; i++) {
+			Circle c = new Circle();
+			c.setLayoutX(Math.random() * 1300);
+			c.setLayoutY(Math.random() * 800);
+			c.setRadius(Math.random() * 20);
+			c.setId("obs" + i);
+			obstacles.add(c);
+			apGP.getChildren().add(c);
+			System.out.println("Hindernis " + i + " bei X:" + c.getLayoutX() + " || Y:" + c.getLayoutY() + " || R:"
+					+ c.getRadius());
+		}
+
+	}
+
+	private void calcTimer(long now) {
+		long curTime = (now - raceTime) / 1000000000;
+		timerField.setText((curTime / 60) % 60 + " : " + curTime % 60);
+	}
+
 	private void checkStart() {
-		if (Double.compare(carbox.getX(), leftLine.getStartX()) == 0) {
+		if (Double.compare(carbox.getLayoutY() + carbox.getY(), leftLine.getLayoutY()) < 0) {
 			raceStarted = true;
 		}
 	}
@@ -185,7 +215,7 @@ public class GamePaneController {
 		double newY = car.getPos().y + car.getGeschwindigkeit() * Math.sin(Math.toRadians(car.getRotation()));
 
 		testOuterBounds();
-
+		testForObstacles();
 		car.setPos(new Vec2d(newX, newY));
 
 		if (Math.abs(car.getBeschleunigung()) > 0.01) {
@@ -232,6 +262,17 @@ public class GamePaneController {
 			car.setBeschleunigung(0.0);
 			car.setGeschwindigkeit(0.0);
 			car.setPos(new Vec2d(1260.0, car.getPos().y));
+		}
+	}
+
+	private void testForObstacles() {
+		for (Circle c : obstacles) {
+			if (carbox.getBoundsInParent().intersects(c.getBoundsInParent())) {
+				car.setBeschleunigung(0.0);
+				car.setGeschwindigkeit(0.0);
+				System.out.println("BOOM");
+			}
+
 		}
 	}
 }
