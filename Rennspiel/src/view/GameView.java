@@ -113,4 +113,16 @@ public class GameView {
 		}
 
 	}
+	
+	public void setUpGameOver() {
+		try {
+			loader = new FXMLLoader(getClass().getResource("GameOverPane.fxml"));
+			rootPane = loader.load();
+			scene = new Scene(rootPane, 1300, 800);
+
+			stage.setScene(scene);
+		} catch (Exception e) {
+			
+		}
+	}
 }

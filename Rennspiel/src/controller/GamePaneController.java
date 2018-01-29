@@ -184,10 +184,11 @@ public class GamePaneController {
 			}
 		}.start();
 	}
+
 	private void setNow(long now) {
 		this.now = now;
 	}
-	
+
 	private void insertObstacles() {
 		for (int i = 0; i < GameController.obsCount; i++) {
 			Circle c = new Circle();
@@ -228,32 +229,26 @@ public class GamePaneController {
 	}
 
 	private void calcNewPos(Car car) {
-
+		System.out.println("Pre " + car.getGeschwindigkeit());
 		calcForces();
 		// v += (a_Motor [-+] ((c_R * g) + (c_W * A * 1/2 * p * v² / m))) * t
+		calcDR();
 
-		if (car.getGeschwindigkeit() < 0.075) {
-			car.setGeschwindigkeit(0.0);
-		}
-		car.setGeschwindigkeit(car.getGeschwindigkeit() + car.getBeschleunigung());
+		System.out.println("Post " + car.getGeschwindigkeit());
+
 		double newX = car.getPos().x + car.getGeschwindigkeit() * Math.cos(Math.toRadians(car.getRotation()));
 		double newY = car.getPos().y + car.getGeschwindigkeit() * Math.sin(Math.toRadians(car.getRotation()));
 
 		testOuterBounds();
+
 		testForObstacles();
+
 		testCheckpoint();
+
 		testFinish();
+
 		car.setPos(new Vec2d(newX, newY));
 
-		if (Math.abs(car.getBeschleunigung()) > 0.01) {
-			if (car.getBeschleunigung() > 0) {
-				car.setBeschleunigung(car.getBeschleunigung() - 0.01);
-			} else {
-				car.setBeschleunigung(car.getBeschleunigung() + 0.01);
-			}
-		} else {
-			car.setBeschleunigung(0.0);
-		}
 	}
 
 	private void calcForces() {
@@ -262,15 +257,35 @@ public class GamePaneController {
 				&& !carbox.getBoundsInParent().intersects(smlEli.getBoundsInParent())) {
 			widerstand = Kraefte.ROLLWIDERSTAND_ASPHALT;
 		}
-		if (car.getGeschwindigkeit() > 0.0) {
-			car.setGeschwindigkeit(
-					(1 - ((car.getLuftwiderstandbeiwert() * car.getStirnflaeche() * (0.5 * Kraefte.LUFTDICHTE)
-							* Math.pow(car.getGeschwindigkeit(), 2)) / car.getGewicht() + 9.81 * widerstand)));
+		car.setGeschwindigkeit(car.getGeschwindigkeit() + car.getBeschleunigung());
+			if (Double.compare(car.getGeschwindigkeit(), 0.0) > 0.0) {
+				car.setGeschwindigkeit(car.getBeschleunigung()
+						- ((car.getLuftwiderstandbeiwert() * car.getStirnflaeche() * (0.5 * Kraefte.LUFTDICHTE)
+								* Math.pow(car.getGeschwindigkeit(), 2)) / car.getGewicht() + 9.81 * widerstand));
+			}
+			if (Double.compare(car.getGeschwindigkeit(), 0.0) < 0.0) {
+				car.setGeschwindigkeit(car.getBeschleunigung()
+						+ ((car.getLuftwiderstandbeiwert() * car.getStirnflaeche() * (0.5 * Kraefte.LUFTDICHTE)
+								* Math.pow(car.getGeschwindigkeit(), 2)) / car.getGewicht() + 9.81 * widerstand));
+			}
+	}
+
+	private void calcDR() {
+		if (Double.compare(Math.abs(car.getGeschwindigkeit()), 0.05) <= 0.0) {
+			car.setGeschwindigkeit(0.0);
+		} else if (car.getGeschwindigkeit() > 4.0) {
+			car.setGeschwindigkeit(4.0);
 		}
-		if (car.getGeschwindigkeit() < 0.0) {
-			car.setGeschwindigkeit(
-					(1 + ((car.getLuftwiderstandbeiwert() * car.getStirnflaeche() * (0.5 * Kraefte.LUFTDICHTE)
-							* Math.pow(car.getGeschwindigkeit(), 2)) / car.getGewicht() + 9.81 * widerstand)));
+		if (Double.compare(Math.abs(car.getBeschleunigung()), 0.005) > 0.0)
+
+		{
+			if (Double.compare(car.getBeschleunigung(), 0.0) > 0.0) {
+				car.setBeschleunigung(car.getBeschleunigung() - 0.005);
+			} else {
+				car.setBeschleunigung(car.getBeschleunigung() + 0.005);
+			}
+		} else {
+			car.setBeschleunigung(0.0);
 		}
 	}
 
@@ -300,6 +315,10 @@ public class GamePaneController {
 	private void testForObstacles() {
 		for (Circle c : obstacles) {
 			if (carbox.getBoundsInParent().intersects(c.getBoundsInParent())) {
+				if (car.getGeschwindigkeit() > 3.0) {
+					gameView = new GameView((Stage) ap.getScene().getWindow());
+					gameView.setUpGameOver();
+				}
 				if (car.getGeschwindigkeit() != 0.0) {
 					System.out.println(car.getGeschwindigkeit());
 				}

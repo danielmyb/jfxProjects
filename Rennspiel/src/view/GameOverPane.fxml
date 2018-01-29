@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane fx:id="ap" prefHeight="800.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GameOverController">
+   <children>
+      <Text layoutX="514.0" layoutY="390.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Du hast verloren!">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Text>
+      <Text layoutX="397.0" layoutY="425.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Du bist zu schnell gegen ein Hindernis gefahren">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Text>
+      <Button fx:id="mButton" layoutX="615.0" layoutY="445.0" mnemonicParsing="false" text="Menu">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <Button fx:id="rButton" layoutX="603.0" layoutY="504.0" mnemonicParsing="false" text="Neustart">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>

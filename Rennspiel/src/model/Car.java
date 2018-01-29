@@ -22,7 +22,7 @@ public class Car {
 	public Car() {
 		this.laenge = 4.255;
 		this.breite = 2.027;
-		this.gewicht = 1500;
+		this.gewicht = 1000;
 		this.rotation = 270;
 		this.stirnflaeche = 2.19;
 		this.rotationsradius = 0.0;
