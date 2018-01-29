@@ -6,10 +6,16 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="apMM" prefHeight="800.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GameController">
+<AnchorPane fx:id="ap" prefHeight="800.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GameController">
    <children>
-      <Text layoutY="13.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Das Rennauto wird über die Pfeiltasten bedient&#10;&#10;Folgende Hotkeys sind verfügbar:&#10;Start: s&#10;Pause: p&#10;Reset: r&#10;&#10;" textAlignment="CENTER" wrappingWidth="346.13671875" StackPane.alignment="TOP_LEFT" />
-      <Text layoutX="900.0" layoutY="13.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Das Spielziel ist es ein Runde abzuschließen&#10;Dafür muss zuerst der Checkpoint passiert werden&#10;und anschließend die Ziellinie&#10;&#10;Kollisionen können bei zu hoher Geschwindigkeit &#10;zu einem Totalschaden führen" textAlignment="CENTER" wrappingWidth="388.13671875" StackPane.alignment="TOP_RIGHT" />
+      <Text layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Das Rennauto wird über die Pfeiltasten bedient&#10;&#10;Folgende Hotkeys sind verfügbar:&#10;Start: s&#10;Pause: p&#10;Reset: r&#10;&#10;" textAlignment="CENTER" wrappingWidth="346.13671875" StackPane.alignment="TOP_LEFT" />
+      <Text layoutX="897.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Das Spielziel ist es ein Runde abzuschließen&#10;Dafür muss zuerst der Checkpoint passiert werden&#10;und anschließend die Ziellinie&#10;&#10;Kollisionen können bei zu hoher Geschwindigkeit &#10;zu einem Totalschaden führen" textAlignment="CENTER" wrappingWidth="388.13671875" StackPane.alignment="TOP_RIGHT" />
       <Button fx:id="sButton" alignment="CENTER" layoutX="550.0" layoutY="375.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" text="Start" textAlignment="CENTER" />
+      <Slider fx:id="obsSlider" layoutX="497.0" layoutY="559.0" max="10.0" prefHeight="45.0" prefWidth="306.0" showTickLabels="true" showTickMarks="true" />
+      <Text layoutX="528.0" layoutY="538.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Anzahl der Hindernisse">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>

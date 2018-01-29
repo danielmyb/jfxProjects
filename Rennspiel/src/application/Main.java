@@ -17,6 +17,7 @@ public class Main extends Application {
 
         //Create the instances for the game
         GameView gameView = new GameView(stage);
+        gameView.setUpMenu();
         GameModel gameModel = new GameModel();
         GameController gameController = new GameController(gameModel, gameView);
         GamePaneController gpc = new GamePaneController();

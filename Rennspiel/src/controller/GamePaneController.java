@@ -6,23 +6,19 @@ import java.util.LinkedList;
 import com.sun.javafx.geom.Vec2d;
 
 import javafx.animation.AnimationTimer;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import model.Car;
 import model.Checkpointlinie;
-import model.GameModel;
-import model.Hindernis;
 import model.Kraefte;
 import model.StartZiellinie;
 import view.GameView;
@@ -36,7 +32,7 @@ public class GamePaneController {
 	@FXML
 	private Button mButton;
 	@FXML
-	private AnchorPane apGP;
+	private AnchorPane ap;
 	@FXML
 	private Line leftLine;
 	@FXML
@@ -45,7 +41,13 @@ public class GamePaneController {
 	private Rectangle carbox;
 	@FXML
 	private TextField timerField;
-	private GameModel gameModel;
+	@FXML
+	private TextField checkPointTime;
+	@FXML
+	private Ellipse bigEli;
+	@FXML
+	private Ellipse smlEli;
+
 	private GameView gameView;
 
 	private Car car;
@@ -55,6 +57,7 @@ public class GamePaneController {
 	private boolean raceStarted;
 
 	private long oldTime;
+	private long now;
 
 	private double rangeX = 0.0;
 	private double rangeY = 0.0;
@@ -62,6 +65,15 @@ public class GamePaneController {
 	private LinkedList<Circle> obstacles = new LinkedList<Circle>();
 
 	private long raceTime;
+	private long curTime;
+	private long pauseTime;
+
+	private boolean checkpointPassed = false;
+	private boolean raceFinished = false;
+
+	public static long finishTime;
+
+	private boolean pause;
 
 	public GamePaneController() {
 
@@ -69,6 +81,8 @@ public class GamePaneController {
 
 	@FXML
 	private void initialize() {
+		pauseTime = 0;
+		pause = false;
 		raceStarted = false;
 		gameLoop();
 		car = new Car();
@@ -83,53 +97,55 @@ public class GamePaneController {
 		carbox.setFill(paint);
 		insertObstacles();
 		mButton.setOnAction((event) -> {
-			try {
-				gameView = new GameView((Stage) apGP.getScene().getWindow());
-				gameView.setUpMenu();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			gameView = new GameView((Stage) ap.getScene().getWindow());
+			gameView.setUpMenu();
+			GameController.obsCount = 0;
 		});
-		apGP.setOnKeyPressed((event) -> {
-			try {
-				switch (event.getCode()) {
-				case UP: {
-					if (car.getBeschleunigung() < 4) {
-						car.setBeschleunigung(car.getBeschleunigung() + 0.2);
-					}
-					break;
+		ap.setOnKeyPressed((event) -> {
+			switch (event.getCode()) {
+			case UP: {
+				if (car.getBeschleunigung() < 4) {
+					car.setBeschleunigung(car.getBeschleunigung() + 0.2);
 				}
-				case DOWN: {
-					if (car.getBeschleunigung() > -4) {
-						car.setBeschleunigung(car.getBeschleunigung() - 0.2);
-					}
-					break;
+				break;
+			}
+			case DOWN: {
+				if (car.getBeschleunigung() > -4) {
+					car.setBeschleunigung(car.getBeschleunigung() - 0.2);
 				}
-				case LEFT: {
-					if (car.getBeschleunigung() != 0) {
-						car.setRotation(car.getRotation() - 5);
-					}
-					break;
+				break;
+			}
+			case LEFT: {
+				if (car.getGeschwindigkeit() != 0) {
+					car.setRotation(car.getRotation() - 5);
 				}
-				case RIGHT: {
-					if (car.getBeschleunigung() != 0) {
-						car.setRotation(car.getRotation() + 5);
-					}
-					break;
+				break;
+			}
+			case RIGHT: {
+				if (car.getGeschwindigkeit() != 0) {
+					car.setRotation(car.getRotation() + 5);
 				}
-				case R: {
-					gameView = new GameView((Stage) apGP.getScene().getWindow());
-					gameView.setUpMenu();
-					break;
+				break;
+			}
+			case R: {
+				gameView = new GameView((Stage) ap.getScene().getWindow());
+				GameController.obsCount = 0;
+				gameView.setUpMenu();
+				break;
+			}
+			case P: {
+				if (!pause) {
+					pauseTime += now;
+				} else {
+					pauseTime = now - pauseTime;
 				}
-				case O:
-					System.out.println("Oh oh");
-				default:
-					break;
-				}
-			} catch (IOException e) {
-
+				pause = !pause;
+			}
+			case O: {
+				System.out.println("Oh oh");
+			}
+			default:
+				break;
 			}
 		});
 
@@ -157,7 +173,7 @@ public class GamePaneController {
 			public void handle(long now) {
 				double timeDifferenceInSeconds = (now - oldTime) / 1000000000.0;
 				oldTime = now;
-
+				setNow(now);
 				if (raceStarted) {
 					calcTimer(now);
 				} else {
@@ -168,16 +184,19 @@ public class GamePaneController {
 			}
 		}.start();
 	}
-
+	private void setNow(long now) {
+		this.now = now;
+	}
+	
 	private void insertObstacles() {
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < GameController.obsCount; i++) {
 			Circle c = new Circle();
 			c.setLayoutX(Math.random() * 1300);
 			c.setLayoutY(Math.random() * 800);
 			c.setRadius(Math.random() * 20);
 			c.setId("obs" + i);
 			obstacles.add(c);
-			apGP.getChildren().add(c);
+			ap.getChildren().add(c);
 			System.out.println("Hindernis " + i + " bei X:" + c.getLayoutX() + " || Y:" + c.getLayoutY() + " || R:"
 					+ c.getRadius());
 		}
@@ -185,8 +204,12 @@ public class GamePaneController {
 	}
 
 	private void calcTimer(long now) {
-		long curTime = (now - raceTime) / 1000000000;
-		timerField.setText((curTime / 60) % 60 + " : " + curTime % 60);
+		if (!raceFinished) {
+			if (!pause) {
+				curTime = (now - raceTime - pauseTime) / 1000000000;
+				timerField.setText((curTime / 60) % 60 + " : " + curTime % 60);
+			}
+		}
 	}
 
 	private void checkStart() {
@@ -196,10 +219,12 @@ public class GamePaneController {
 	}
 
 	public void updateContinously(double t) {
-		calcNewPos(car);
-		carbox.setX(car.getPos().x);
-		carbox.setY(car.getPos().y);
-		carbox.setRotate(car.getRotation());
+		if (!pause) {
+			calcNewPos(car);
+			carbox.setX(car.getPos().x);
+			carbox.setY(car.getPos().y);
+			carbox.setRotate(car.getRotation());
+		}
 	}
 
 	private void calcNewPos(Car car) {
@@ -216,6 +241,8 @@ public class GamePaneController {
 
 		testOuterBounds();
 		testForObstacles();
+		testCheckpoint();
+		testFinish();
 		car.setPos(new Vec2d(newX, newY));
 
 		if (Math.abs(car.getBeschleunigung()) > 0.01) {
@@ -230,15 +257,20 @@ public class GamePaneController {
 	}
 
 	private void calcForces() {
+		double widerstand = Kraefte.ROLLWIDERSTAND_ERDWEG;
+		if (carbox.getBoundsInParent().intersects(bigEli.getBoundsInParent())
+				&& !carbox.getBoundsInParent().intersects(smlEli.getBoundsInParent())) {
+			widerstand = Kraefte.ROLLWIDERSTAND_ASPHALT;
+		}
 		if (car.getGeschwindigkeit() > 0.0) {
-			car.setGeschwindigkeit((car.getGeschwindigkeit() - car.getLuftwiderstandbeiwert() * car.getStirnflaeche()
-					* (0.5 * Kraefte.LUFTDICHTE) * Math.pow(car.getGeschwindigkeit(), 2)
-					- 9.81 * Kraefte.ROLLWIDERSTAND_ASPHALT));
+			car.setGeschwindigkeit(
+					(1 - ((car.getLuftwiderstandbeiwert() * car.getStirnflaeche() * (0.5 * Kraefte.LUFTDICHTE)
+							* Math.pow(car.getGeschwindigkeit(), 2)) / car.getGewicht() + 9.81 * widerstand)));
 		}
 		if (car.getGeschwindigkeit() < 0.0) {
-			car.setGeschwindigkeit((car.getGeschwindigkeit() + car.getLuftwiderstandbeiwert() * car.getStirnflaeche()
-					* (0.5 * Kraefte.LUFTDICHTE) * Math.pow(car.getGeschwindigkeit(), 2)
-					+ 9.81 * Kraefte.ROLLWIDERSTAND_ASPHALT));
+			car.setGeschwindigkeit(
+					(1 + ((car.getLuftwiderstandbeiwert() * car.getStirnflaeche() * (0.5 * Kraefte.LUFTDICHTE)
+							* Math.pow(car.getGeschwindigkeit(), 2)) / car.getGewicht() + 9.81 * widerstand)));
 		}
 	}
 
@@ -268,11 +300,35 @@ public class GamePaneController {
 	private void testForObstacles() {
 		for (Circle c : obstacles) {
 			if (carbox.getBoundsInParent().intersects(c.getBoundsInParent())) {
+				if (car.getGeschwindigkeit() != 0.0) {
+					System.out.println(car.getGeschwindigkeit());
+				}
 				car.setBeschleunigung(0.0);
 				car.setGeschwindigkeit(0.0);
-				System.out.println("BOOM");
+
 			}
 
+		}
+	}
+
+	private void testCheckpoint() {
+		if (carbox.getBoundsInParent().intersects(rightLine.getBoundsInParent())) {
+			checkpointPassed = true;
+			long cTime = curTime;
+			checkPointTime.setText(((cTime / 60) % 60) + " : " + (cTime % 60));
+		}
+	}
+
+	private void testFinish() {
+		if (checkpointPassed) {
+			if (carbox.getBoundsInParent().intersects(leftLine.getBoundsInParent())) {
+				raceFinished = true;
+				finishTime = curTime;
+
+				gameView = new GameView((Stage) ap.getScene().getWindow());
+				gameView.setUpWinWindow();
+
+			}
 		}
 	}
 }

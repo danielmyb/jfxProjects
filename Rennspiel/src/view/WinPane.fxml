@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="ap" prefHeight="800.0" prefWidth="1300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.WinPaneController">
+   <children>
+      <Text layoutX="478.0" layoutY="416.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Du hast gewonnen!">
+         <font>
+            <Font size="40.0" />
+         </font>
+      </Text>
+      <Text layoutX="579.0" layoutY="458.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Deine Zeit:">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Text>
+      <TextField fx:id="winTime" alignment="CENTER" disable="true" layoutX="556.0" layoutY="466.0" promptText="00:00:00" />
+      <Button fx:id="mButton" layoutX="617.0" layoutY="522.0" mnemonicParsing="false" text="Menu" />
+      <Button fx:id="rButton" layoutX="607.0" layoutY="573.0" mnemonicParsing="false" text="Nochmal" />
+   </children>
+</AnchorPane>
