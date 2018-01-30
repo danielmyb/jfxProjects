@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.LinkedList;
 
 import com.sun.javafx.geom.Vec2d;
@@ -129,8 +130,7 @@ public class GamePaneController {
 			}
 			case R: {
 				gameView = new GameView((Stage) ap.getScene().getWindow());
-				GameController.obsCount = 0;
-				gameView.setUpMenu();
+				gameView.setUpGameWindow();
 				break;
 			}
 			case P: {
@@ -229,12 +229,15 @@ public class GamePaneController {
 	}
 
 	private void calcNewPos(Car car) {
-		System.out.println("Pre " + car.getGeschwindigkeit());
+		//System.out.println("Pre Ges  " + car.getGeschwindigkeit());
+		//System.out.println("Pre Bes  " + car.getBeschleunigung());
+		
 		calcForces();
 		// v += (a_Motor [-+] ((c_R * g) + (c_W * A * 1/2 * p * v² / m))) * t
 		calcDR();
 
-		System.out.println("Post " + car.getGeschwindigkeit());
+		//System.out.println("Post Ges " + car.getGeschwindigkeit());
+		//System.out.println("Post Bes " + car.getBeschleunigung());
 
 		double newX = car.getPos().x + car.getGeschwindigkeit() * Math.cos(Math.toRadians(car.getRotation()));
 		double newY = car.getPos().y + car.getGeschwindigkeit() * Math.sin(Math.toRadians(car.getRotation()));
@@ -246,6 +249,13 @@ public class GamePaneController {
 		testCheckpoint();
 
 		testFinish();
+		
+		if(car.getGeschwindigkeit() > 0.0) {
+			URL url = getClass().getResource("/resources/motorSound.wav");
+			SoundManager.playSound(url);
+		} else {
+			SoundManager.stopSound();
+		}
 
 		car.setPos(new Vec2d(newX, newY));
 
@@ -276,7 +286,7 @@ public class GamePaneController {
 		} else if (car.getGeschwindigkeit() > 4.0) {
 			car.setGeschwindigkeit(4.0);
 		}
-		if (Double.compare(Math.abs(car.getBeschleunigung()), 0.005) > 0.0)
+		if (Math.abs(car.getBeschleunigung()) > 0.005)
 
 		{
 			if (Double.compare(car.getBeschleunigung(), 0.0) > 0.0) {
@@ -286,6 +296,7 @@ public class GamePaneController {
 			}
 		} else {
 			car.setBeschleunigung(0.0);
+			car.setGeschwindigkeit(0.0);
 		}
 	}
 
